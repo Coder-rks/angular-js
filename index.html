@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <title>AngularJS Example with Multiple Services</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body>
+
+<div ng-controller="ControllerOne">
+    <h1>Controller One</h1>
+    <input type="text" ng-model="sharedData.message" placeholder="Enter message">
+    <p>Message: {{sharedData.message}}</p>
+    <p>Random Fact: {{fact}}</p>
+</div>
+
+<div ng-controller="ControllerTwo">
+    <h1>Controller Two</h1>
+    <p>Received Message: {{sharedData.message}}</p>
+    <button ng-click="clearMessage()">Clear Message</button>
+    <button ng-click="updateFact()">Get New Fact</button>
+</div>
+
+<script>
+    // Module
+    var app = angular.module('myApp', []);
+
+    // Shared Data Service
+    app.service('SharedDataService', function() {
+        this.message = "";
+    });
+
+    // Random Fact Service
+    app.service('RandomFactService', function() {
+        var facts = [
+            'AngularJS is maintained by Google.',
+            'AngularJS simplifies the development and testing process.',
+            'AngularJS supports two-way data binding.'
+        ];
+
+        this.getRandomFact = function() {
+            return facts[Math.floor(Math.random() * facts.length)];
+        };
+    });
+
+    // Controller One
+    app.controller('ControllerOne', function($scope, SharedDataService, RandomFactService) {
+        $scope.sharedData = SharedDataService;
+        $scope.fact = RandomFactService.getRandomFact();
+    });
+
+    // Controller Two
+    app.controller('ControllerTwo', function($scope, SharedDataService, RandomFactService) {
+        $scope.sharedData = SharedDataService;
+        $scope.clearMessage = function() {
+            $scope.sharedData.message = "";
+        };
+        $scope.updateFact = function() {
+            alert(RandomFactService.getRandomFact());
+        };
+    });
+</script>
+
+</body>
+</html>
